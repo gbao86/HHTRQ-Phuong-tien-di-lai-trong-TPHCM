@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống hỗ trợ lựa chọn phương tiện giao thông AHP-SAW</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="sidebar">
+      <h3>Điều hướng</h3>
+      <ul>
+        <li><a href="#distance-section">Chọn khoảng cách</a></li>
+        <li><a href="#comparison-section">So sánh tiêu chí</a></li>
+        <li><a href="#weights-section">Trọng số tiêu chí</a></li>
+        <li><a href="#alternatives-section">Đánh giá phương tiện</a></li>
+        <li><a href="#result-section">Kết quả xếp hạng</a></li>
+        <li><button id="btn-recalculate">Tính toán lại</button></li>
+        <li><button id="btn-reset">Đặt lại dữ liệu</button></li>
+        <li><button id="btn-guide">Hướng dẫn sử dụng</button></li>
+      </ul>
+    </nav>
+    <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+    <div class="main-content">
+      <header>
+        <h1>HỆ THỐNG HỖ TRỢ LỰA CHỌN PHƯƠNG TIỆN NỘI THÀNH TP.HCM</h1>
+      </header>
+
+      <section id="distance-section">
+        <h2>Chọn khoảng cách di chuyển</h2>
+        <select id="distance" class="form-control">
+          <option value="short">Quãng ngắn (< 5km)</option>
+          <option value="medium">Quãng trung bình (5-15km)</option>
+          <option value="long">Quãng dài (> 15km)</option>
+        </select>
+        <div id="distance-recommendation" class="highlight"></div>
+      </section>
+
+      <section id="comparison-section">
+        <h2>So sánh cặp tiêu chí (AHP)</h2>
+        <p>Điền số từ 1 đến 9 để thể hiện mức độ ưu tiên giữa các tiêu chí. Không cần điền các ô dấu "-".</p>
+        <table id="comparison-table">
+          <thead>
+            <tr>
+              <th>Tiêu chí</th>
+              <th>Chi phí</th>
+              <th>Thời gian</th>
+              <th>Tiện lợi</th>
+              <th>An toàn</th>
+              <th>Môi trường</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Chi phí</strong></td>
+              <td class="disabled-cell">-</td>
+              <td><input type="number" min="1" max="9" value="3" id="c12"></td>
+              <td><input type="number" min="1" max="9" value="5" id="c13"></td>
+              <td><input type="number" min="1" max="9" value="7" id="c14"></td>
+              <td><input type="number" min="1" max="9" value="7" id="c15"></td>
+            </tr>
+            <tr>
+              <td><strong>Thời gian</strong></td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td><input type="number" min="1" max="9" value="3" id="c23"></td>
+              <td><input type="number" min="1" max="9" value="5" id="c24"></td>
+              <td><input type="number" min="1" max="9" value="5" id="c25"></td>
+            </tr>
+            <tr>
+              <td><strong>Tiện lợi</strong></td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td><input type="number" min="1" max="9" value="3" id="c34"></td>
+              <td><input type="number" min="1" max="9" value="3" id="c35"></td>
+            </tr>
+            <tr>
+              <td><strong>An toàn</strong></td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td><input type="number" min="1" max="9" value="3" id="c45"></td>
+            </tr>
+            <tr>
+              <td><strong>Môi trường</strong></td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+              <td class="disabled-cell">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="weights-section">
+        <h2>Trọng số tiêu chí</h2>
+        <table id="weights-table">
+          <thead>
+            <tr>
+              <th>Chi phí</th>
+              <th>Thời gian</th>
+              <th>Tiện lợi</th>
+              <th>An toàn</th>
+              <th>Môi trường</th>
+              <th>Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="weight1">-</td>
+              <td id="weight2">-</td>
+              <td id="weight3">-</td>
+              <td id="weight4">-</td>
+              <td id="weight5">-</td>
+              <td id="weight-sum">-</td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="consistency-result" class="highlight"></div>
+      </section>
+
+      <section id="alternatives-section">
+        <h2>Thông tin các loại phương tiện</h2>
+        <p>Đánh giá các phương tiện theo 5 tiêu chí (thang điểm 1-10):</p>
+        <div id="alternatives-status" class="highlight"></div>
+        <table id="alternatives-table">
+          <thead>
+            <tr>
+              <th>Tên phương tiện</th>
+              <th>Chi phí</th>
+              <th>Thời gian</th>
+              <th>Tiện lợi</th>
+              <th>An toàn</th>
+              <th>Môi trường</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Ô tô</strong></td>
+              <td><input type="number" min="1" max="10" value="8" id="a11"></td>
+              <td><input type="number" min="1" max="10" value="7" id="a12"></td>
+              <td><input type="number" min="1" max="10" value="6" id="a13"></td>
+              <td><input type="number" min="1" max="10" value="8" id="a14"></td>
+              <td><input type="number" min="1" max="10" value="4" id="a15"></td>
+            </tr>
+            <tr>
+              <td><strong>Xe máy</strong></td>
+              <td><input type="number" min="1" max="10" value="3" id="a21"></td>
+              <td><input type="number" min="1" max="10" value="4" id="a22"></td>
+              <td><input type="number" min="1" max="10" value="7" id="a23"></td>
+              <td><input type="number" min="1" max="10" value="5" id="a24"></td>
+              <td><input type="number" min="1" max="10" value="5" id="a25"></td>
+            </tr>
+            <tr>
+              <td><strong>Xe bus, Metro</strong></td>
+              <td><input type="number" min="1" max="10" value="2" id="a31"></td>
+              <td><input type="number" min="1" max="10" value="6" id="a32"></td>
+              <td><input type="number" min="1" max="10" value="4" id="a33"></td>
+              <td><input type="number" min="1" max="10" value="6" id="a34"></td>
+              <td><input type="number" min="1" max="10" value="7" id="a35"></td>
+            </tr>
+            <tr>
+              <td><strong>Xe công nghệ</strong></td>
+              <td><input type="number" min="1" max="10" value="5" id="a41"></td>
+              <td><input type="number" min="1" max="10" value="5" id="a42"></td>
+              <td><input type="number" min="1" max="10" value="8" id="a43"></td>
+              <td><input type="number" min="1" max="10" value="7" id="a44"></td>
+              <td><input type="number" min="1" max="10" value="6" id="a45"></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <button id="btn-rank">So sánh & Xếp hạng</button>
+      </section>
+
+      <section id="result-section">
+        <h2>Kết quả xếp hạng</h2>
+        <table id="ranking-table" class="result-table">
+          <thead>
+            <tr>
+              <th>Xếp hạng</th>
+              <th>Phương tiện</th>
+              <th>Điểm tổng hợp</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div id="best-option" class="highlight"></div>
+      </section>
+
+      <footer>
+        <p>© 2025 - Hệ thống hỗ trợ lựa chọn phương tiện AHP-SAW</p>
+      </footer>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
